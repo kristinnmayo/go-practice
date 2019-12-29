@@ -8,17 +8,51 @@ import (
 	"path/filepath"
 )
 
-type hit struct {
+type Filelist []string
+type Hit struct {
 	file string
 	line int
-	column int
 	code string
-	err error
+	vuln string
 }
 
-// accept a path and return all filenames
+// search a list of files for vulnerable strings and return list of hits
+func (filenames Filelist) seek() (hits []Hit) {
+	// list vulnerable strings to search for
+	hitlist := []string{"sprintf", "todo"}
+
+	// for each file in tree, do stuff
+	for _, file := range filenames {
+		// open in read-only mode (returns pointer of type os.File)
+		f, err := os.Open(file)
+		if err != nil {
+			log.Fatalf("failed opening file: %s", err)
+		}
+		defer f.Close()
+
+		scanner := bufio.NewScanner(f)
+		scanner.Split(bufio.ScanLines)
+
+		// Scan() forwards to the next line
+		for line := 1; scanner.Scan(); line++ {
+			code := scanner.Text()
+			for _, vuln := range hitlist {
+				if strings.Contains(code, vuln) {
+					h := Hit{file, line, code, vuln}
+					hits = append(hits, h)
+					log.Printf("%s:%d:%s (%s)\n", h.file, h.line, h.code, h.vuln)
+				}
+			}
+		}
+	}
+	return hits
+}
+
+// accept a path and return all filenames in tree
 func walk(path string) (files []string) {
 	root := "./"
+
+	// func Walk(root string, walkFn WalkFunc) error
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		files = append(files, path)
 		return nil
@@ -40,35 +74,9 @@ func main() {
 	}
 
 	// list all paths in tree
-	filenames := walk(path)
+	filenames := Filelist(walk(path))
 
-	// list vulnerable strings to search for
-	hitlist := []string{"sprintf", "todo", "note"}
-
-	// for each file in tree, do stuff
-	for _, file := range filenames {
-		log.Println(file)
-
-		// open in read-only mode (returns pointer of type os.File)
-		f, err := os.Open(file)
-		if err != nil {
-			log.Fatalf("failed opening file: %s", err)
-		}
-
-		// execute after current function returns
-		defer f.Close()
-
-		scanner := bufio.NewScanner(f)
-		scanner.Split(bufio.ScanLines)
-
-		// Scan() forwards to the next line
-		for l := 1; scanner.Scan(); l++ {
-			line := scanner.Text()
-			for _, v := range hitlist {
-				if strings.Contains(line, v) {
-					log.Printf("%s:%d:%s\n", file, l, line)
-				}
-			}
-		}
-	}
+	// search for vulnerable strings
+	hits := filenames.seek()
+	log.Println(hits)
 }
