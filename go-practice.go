@@ -8,13 +8,12 @@ import (
 	"path/filepath"
 )
 
-type Filelist []string
-
 type Hit struct {
 	file string
 	line int
 	code string
 	vuln string
+	err error
 }
 
 // log info on a hit
@@ -23,13 +22,12 @@ func (h Hit) display() {
 }
 
 // search a list of files for vulnerable strings and return list of hits
-func (filenames Filelist) seek() (hits []Hit) {
+func seek(filenames []string) (hits []Hit) {
 	// list vulnerable strings to search for
-	hitlist := []string{"sprintf", "todo"}
+	hitlist := []string{"Sprintf", "todo", "Mkdir", "MkdirAll"}
 
-	// for each file in tree, do stuff
 	for _, file := range filenames {
-		// open in read-only mode (returns pointer of type os.File)
+		// open in read-only mode -> returns pointer of type os.File
 		f, err := os.Open(file)
 		if err != nil {
 			log.Fatalf("failed opening file: %s", err)
@@ -44,7 +42,7 @@ func (filenames Filelist) seek() (hits []Hit) {
 			code := scanner.Text()
 			for _, vuln := range hitlist {
 				if strings.Contains(code, vuln) {
-					h := Hit{file, line, code, vuln}
+					h := Hit{file, line, code, vuln, nil}
 					hits = append(hits, h)
 				}
 			}
@@ -75,15 +73,14 @@ func main() {
 	if len(args) > 1 {
 		path = args[1]
 	} else {
-		log.Fatal("\n\tsyntax: ./go-tools <filename.go>\n")
+		log.Fatal("\n\tsyntax: go-tools <filename.go>\n")
 	}
 
-	// list all paths in tree
-	filenames := Filelist(walk(path))
-
 	// search for vulnerable strings
-	hits := filenames.seek()
+	hits := seek(walk(path))
+
 	for _, h := range hits {
+		log.Println(h.file)
 		h.display()
 	}
 }
