@@ -9,11 +9,17 @@ import (
 )
 
 type Filelist []string
+
 type Hit struct {
 	file string
 	line int
 	code string
 	vuln string
+}
+
+// log info on a hit
+func (h Hit) display() {
+	log.Printf("%s:%d %s (%s)", h.file, h.line, h.code, h.vuln)
 }
 
 // search a list of files for vulnerable strings and return list of hits
@@ -40,7 +46,6 @@ func (filenames Filelist) seek() (hits []Hit) {
 				if strings.Contains(code, vuln) {
 					h := Hit{file, line, code, vuln}
 					hits = append(hits, h)
-					log.Printf("%s:%d:%s (%s)\n", h.file, h.line, h.code, h.vuln)
 				}
 			}
 		}
@@ -78,5 +83,7 @@ func main() {
 
 	// search for vulnerable strings
 	hits := filenames.seek()
-	log.Println(hits)
+	for _, h := range hits {
+		h.display()
+	}
 }
