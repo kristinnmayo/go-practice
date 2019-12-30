@@ -2,18 +2,19 @@ package main
 
 import (
 	"bufio"
-	"os"
 	"log"
-	"strings"
+	"os"
 	"path/filepath"
+	"strings"
 )
 
+// Hit is a possible vulnerability
 type Hit struct {
 	file string
 	line int
 	code string
 	vuln string
-	err error
+	err  error
 }
 
 // log info on a hit
@@ -52,11 +53,12 @@ func seek(filenames []string) (hits []Hit) {
 }
 
 // accept a path and return all filenames in tree
-func walk(path string) (files []string) {
-	root := "./"
-
-	// func Walk(root string, walkFn WalkFunc) error
-	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+func walk(dir string) (files []string) {
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		// only check .go files
+		if filepath.Ext(path) != ".go" {
+			return nil
+		}
 		files = append(files, path)
 		return nil
 	})
@@ -66,7 +68,7 @@ func walk(path string) (files []string) {
 	return files
 }
 
-func main() {	
+func main() {
 	// command line options
 	path := ""
 	args := os.Args
@@ -76,11 +78,14 @@ func main() {
 		log.Fatal("\n\tsyntax: go-tools <filename.go>\n")
 	}
 
-	// search for vulnerable strings
-	hits := seek(walk(path))
+	// get list of target files
+	targets := walk(path)
 
+	// search for vulnerable strings within targets
+	hits := seek(targets)
+
+	// display details of each found possible vulnerability
 	for _, h := range hits {
-		log.Println(h.file)
 		h.display()
 	}
 }
