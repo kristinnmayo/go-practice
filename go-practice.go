@@ -20,6 +20,7 @@ type Hit struct {
 // File is one file in the user specified system
 type File struct {
 	name  string         // name of file
+	path  string         // file path
 	perm  os.FileMode    // file permissions
 	vulns map[string]int // number of hits found
 }
@@ -35,6 +36,15 @@ func (f File) display() {
 	log.Println(f.vulns)
 }
 
+func output(hits []Hit, files []File) {
+	for _, h := range hits {
+		h.display()
+	}
+	for _, f := range files {
+		f.display()
+	}
+}
+
 // search a list of files for vulnerable strings and return list of hits
 func seek(files []File) (hits []Hit) {
 	// list vulnerable strings to search for
@@ -42,7 +52,7 @@ func seek(files []File) (hits []Hit) {
 
 	for _, file := range files {
 		// open in read-only mode -> returns pointer of type os.File
-		f, err := os.Open(file.name)
+		f, err := os.Open(file.path)
 		if err != nil {
 			log.Fatalf("failed opening file: %s", err)
 		}
@@ -68,10 +78,13 @@ func seek(files []File) (hits []Hit) {
 
 // accept a path and return all filenames in tree
 func walk(dir string) (files []File) {
+	// func Walk(root string, walkFn WalkFunc) error
+	// type WalkFunc func(path string, info os.FileInfo, err error) error
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			log.Println(err)
+			log.Fatal(path, err)
 		}
+
 		// only check .go files
 		if filepath.Ext(path) != ".go" {
 			return nil
@@ -80,7 +93,7 @@ func walk(dir string) (files []File) {
 		name := info.Name()
 		perm := info.Mode().Perm()
 		vulns := make(map[string]int)
-		f := File{name, perm, vulns}
+		f := File{name, path, perm, vulns}
 		files = append(files, f)
 		return nil
 	})
@@ -91,28 +104,8 @@ func walk(dir string) (files []File) {
 }
 
 func main() {
-	// command line options
-	path := ""
-	args := os.Args
-	if len(args) > 1 {
-		path = args[1]
-	} else {
-		log.Fatal("\n\tusage: go-tools <filename.go>\n")
-	}
-
-	// get list of target files
-	targets := walk(path)
-
-	// search for vulnerable strings within targets
-	hits := seek(targets)
-
-	// display details of each found possible vulnerability
-	for _, h := range hits {
-		h.display()
-	}
-
-	// display file permissions for each file
-	for _, t := range targets {
-		t.display()
-	}
+	path := os.Args[1]    // todo -- command line options
+	targets := walk(path) // get list of target files
+	hits := seek(targets) // search for vulnerable strings within targets
+	output(hits, targets) // print results
 }
