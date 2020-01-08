@@ -18,6 +18,6 @@ func New(file, code, vuln string, line int) Hit {
 }
 
 // Display is used to log info on a hit
-func (h Hit) Display() {
+func (h *Hit) Display() {
 	log.Printf("%s:%d %s (%s)", h.File, h.Line, h.Code, h.Vuln)
 }

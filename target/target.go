@@ -18,12 +18,7 @@ func New(path string, perm os.FileMode) Target {
 }
 
 // Display is used to log info on a target
-func (t Target) Display() {
+func (t *Target) Display() {
 	log.Printf("%s (%04o)", t.Path, t.Perm)
 	log.Println(t.Vulns)
-}
-
-// Getname is used to return the path of the target
-func (t *Target) Getname() string {
-	return t.Path
 }
