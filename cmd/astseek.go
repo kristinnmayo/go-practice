@@ -44,7 +44,8 @@ func Tryast() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		targets = append(targets, target.New(path, info.Mode()))
+		t := target.New(path, info.Mode())
+		targets = append(targets, t)
 
 		// func ParseFile(fset *token.FileSet, filename string, src interface{}, mode Mode) (f *ast.File, err error)
 		// ParseFile parses the source code of a single Go source file and returns the corresponding ast.File node.
