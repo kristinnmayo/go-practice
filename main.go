@@ -8,18 +8,16 @@ import (
 )
 
 func main() {
-	path := os.Args[1]              // todo -- command line options
-	targets := target.Walk(path)    // get list of target files
-	hits := cmd.Tryscanner(targets) // search for vulnerable strings within targets
+	// todo -- command line options
+	path := os.Args[1]
+	targets := target.Walk(path)
 
-	for _, h := range hits {
-		h.Display()
-	}
+	// cmd.Tryscanner(targets)
+	cmd.Astseek(targets)
+	// cmd.Tryanalysis(targets)
 
-	for _, t := range targets {
-		t.Display()
-	}
-
-	cmd.Tryast()
-	cmd.Tryanalysis()
+	// log.Println("Targets:")
+	// for _, t := range targets {
+	// 	t.Display()
+	// }
 }

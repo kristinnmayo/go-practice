@@ -11,16 +11,13 @@ import (
 )
 
 // Tryscanner is used to search a list of files for vulnerable strings and return list of hits
-func Tryscanner(targets []target.Target) []*hit.Hit {
-	// list vulnerable strings to search for
-	hitlist := []string{"Sprintf", "todo", "Mkdir", "MkdirAll"}
-
-	// slice to store hits
+func Tryscanner(targets []*target.Target) {
 	var hits []*hit.Hit
-
-	for _, target := range targets {
+	// list vulnerable strings to search for
+	hitlist := []string{"Sprintf", "todo"}
+	for _, t := range targets {
 		// open in read-only mode -> returns pointer of type os.File
-		f, err := os.Open(target.Path)
+		f, err := os.Open(t.Path)
 		if err != nil {
 			log.Fatalf("failed opening file: %s", err)
 		}
@@ -28,18 +25,19 @@ func Tryscanner(targets []target.Target) []*hit.Hit {
 
 		scanner := bufio.NewScanner(f)
 		scanner.Split(bufio.ScanLines)
-
 		// Scan() forwards to the next line
 		for line := 1; scanner.Scan(); line++ {
 			code := scanner.Text()
 			for _, vuln := range hitlist {
 				if strings.Contains(code, vuln) {
-					h := hit.New(target.Path, code, vuln, line)
-					target.Vulns[vuln]++
+					h := hit.New(t.Path, code, vuln, line)
+					t.Vulns[vuln]++
 					hits = append(hits, &h)
 				}
 			}
 		}
 	}
-	return hits
+	for _, h := range hits {
+		h.Display()
+	}
 }

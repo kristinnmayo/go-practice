@@ -1,6 +1,8 @@
 package cmd
 
+import "github.com/go-practice/target"
+
 // Tryanalysis ...
-func Tryanalysis() {
+func Tryanalysis(targets []*target.Target) {
 	return
 }
