@@ -6,6 +6,15 @@ import (
 	"path/filepath"
 )
 
+// type Summary struct {
+// 	Name        string  `json:"name"`
+// 	Description string  `json:"description"`
+// 	Errors      []Error `json:"errors"`
+// 	SumCover    float64
+// 	CountCover  int
+// 	Avg         float64
+// }
+
 // Target is one file in the user specified system
 type Target struct {
 	Path  string         // file path

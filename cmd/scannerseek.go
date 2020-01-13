@@ -10,8 +10,8 @@ import (
 	"github.com/go-practice/target"
 )
 
-// Tryscanner is used to search a list of files for vulnerable strings and return list of hits
-func Tryscanner(targets []*target.Target) {
+// Scannerseek is used to search a list of files for vulnerable strings and return list of hits
+func Scannerseek(targets []*target.Target) {
 	var hits []*hit.Hit
 	// list vulnerable strings to search for
 	hitlist := []string{"Sprintf", "todo"}

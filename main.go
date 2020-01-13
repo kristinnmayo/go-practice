@@ -1,20 +1,19 @@
 package main
 
 import (
-	"os"
-
 	"github.com/go-practice/cmd"
-	"github.com/go-practice/target"
 )
 
 func main() {
 	// todo -- command line options
-	path := os.Args[1]
-	targets := target.Walk(path)
+	// path := os.Args[1]
+	// targets := target.Walk(path)
 
-	// cmd.Tryscanner(targets)
-	cmd.Astseek(targets)
-	// cmd.Tryanalysis(targets)
+	// cmd.Scannerseek(targets)
+	// cmd.Astseek(targets)
+	cmd.Analysisseek()
+	// cmd.Ssaseek(targets)
+	// cmd.Customseek(targets)
 
 	// log.Println("Targets:")
 	// for _, t := range targets {

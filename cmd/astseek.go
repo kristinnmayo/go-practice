@@ -14,7 +14,6 @@ import (
 // Astseek todo
 func Astseek(targets []*target.Target) {
 	for _, t := range targets {
-
 		fileset := token.NewFileSet() // positions are relative to fset
 		root, err := parser.ParseFile(fileset, t.Path, nil, parser.ParseComments)
 		if err != nil {
