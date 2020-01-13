@@ -1,8 +1,13 @@
 package cmd
 
-import "github.com/go-practice/target"
+import (
+	"github.com/go-practice/sprintfcheck"
+	"golang.org/x/tools/go/analysis/multichecker"
+)
 
-// Tryanalysis ...
-func Tryanalysis(targets []*target.Target) {
-	return
+// Analysisseek ...
+func Analysisseek() {
+	multichecker.Main(
+		sprintfcheck.Analyzer,
+	)
 }
