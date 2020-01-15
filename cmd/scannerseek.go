@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/go-practice/hit"
-	"github.com/go-practice/target"
+	"github.com/go-practice/types/hit"
+	"github.com/go-practice/types/target"
 )
 
 // Scannerseek is used to search a list of files for vulnerable strings and return list of hits

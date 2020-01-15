@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/go-practice/sprintfcheck"
-	"github.com/go-practice/todocheck"
+	"github.com/go-practice/analyzers/sprintfcheck"
+	"github.com/go-practice/analyzers/todocheck"
 	"golang.org/x/tools/go/analysis/multichecker"
 )
 

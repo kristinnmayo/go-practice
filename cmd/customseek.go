@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	"github.com/go-practice/target"
+	"github.com/go-practice/types/target"
 )
 
 // Customseek ...

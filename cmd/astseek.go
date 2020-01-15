@@ -8,7 +8,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/go-practice/target"
+	"github.com/go-practice/types/target"
 )
 
 // Astseek todo
