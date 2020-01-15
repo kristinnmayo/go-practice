@@ -30,13 +30,13 @@ func Astseek(targets []*target.Target) {
 
 		// depth first traversal
 		ast.Inspect(root, func(n ast.Node) bool {
-			var s string
 			switch x := n.(type) {
 			case *ast.Ident:
-				s = x.Name
-				if s == "Sprintf" {
+				s := x.Name
+				switch s {
+				case "Sprintf", "Mkdir", "MkdirAll":
 					fmt.Printf("%s:\t%s\n", fileset.Position(n.Pos()), s)
-					t.Vulns["Sprintf"]++
+					// t.Vulns["Sprintf"]++
 				}
 			}
 			return true
